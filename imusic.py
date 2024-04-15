@@ -11,17 +11,21 @@ from pedalboard import Pedalboard, Chorus, Reverb
 from pedalboard.io import AudioFile
 from scipy.io import wavfile
 song = np.array([])
-octaves = np.array([0.5,1,2])
+octave = np.array([1,2,4,6,7,5])
+import os
 sr = 22050 # sample rate
-T = 0.1    # 0.1 second duration
+T = 0.5   # 0.1  duration
 t = np.linspace(0, T, int(T*sr), endpoint=False) # time variable
-#Make a song with numpy array :]
-#nPixels = int(len(frequencies))#All pixels in image
+
 nPixels = 60
 scale_freqs = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30]
-
-
+harmony = {'U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
+                      'm7', 'M7', 'O8'  }
+Keys = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
+Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIA'
+          'HARMONIC_MINOR','MINOR', 'MELODIC_MINOR', 'MIXOLYDIAN']
 def hue2freq(h, scale_freqs):
+
     thresholds = [26, 52, 78, 104, 128, 154, 180]
     note = scale_freqs[0]
     if (h <= thresholds[0]):
@@ -35,8 +39,10 @@ def hue2freq(h, scale_freqs):
     elif (h > thresholds[3]) & (h <= thresholds[4]):
         note = scale_freqs[4]
     elif (h > thresholds[4]) & (h <= thresholds[5]):
+
         note = scale_freqs[5]
     elif (h > thresholds[5]) & (h <= thresholds[6]):
+
         note = scale_freqs[6]
     else:
         note = scale_freqs[0]
@@ -54,9 +60,9 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
         T      :     (int) time in seconds for dutation of each note in song
         nPixels:     (int) how many pixels to use to make song
     Returns:
-        song   :     (array) Numpy array of frequencies. Can be played by ipd.Audio(song, rate = sr)
+        song   :     (array) Numpy array of frequencies.
     """
-    # Convert image to HSV
+
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Get shape of image
@@ -71,18 +77,14 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
         for j in range(width):
             hue = hsv[i][j][0]  # This is the hue value at pixel coordinate (i,j)
             hues.append(hue)
-
+    # print(hues)
     # Make dataframe containing hues and frequencies
     pixels_df = pd.DataFrame(hues, columns=['hues'])
+
     pixels_df['frequencies'] = pixels_df.apply(lambda row: hue2freq(row['hues'], scale), axis=1)
     frequencies = pixels_df['frequencies'].to_numpy()
 
-    # Make harmony dictionary (i.e. fundamental, perfect fifth, major third, octave)
-    # unison           = U0 ; semitone         = ST ; major second     = M2
-    # minor third      = m3 ; major third      = M3 ; perfect fourth   = P4
-    # diatonic tritone = DT ; perfect fifth    = P5 ; minor sixth      = m6
-    # major sixth      = M6 ; minor seventh    = m7 ; major seventh    = M7
-    # octave           = O8
+
     harmony_select = {'U0': 1,
                       'ST': 16 / 15,
                       'M2': 9 / 8,
@@ -97,6 +99,7 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
                       'M7': 15 / 8,
                       'O8': 2
                       }
+
     harmony = np.array([])  # This array will contain the song harmony
     harmony_val = harmony_select[harmonize]  # This will select the ratio for the desired harmony
 
@@ -104,9 +107,7 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
     song = np.array([])  # This array will contain the song signal
     octaves = np.array([0.5, 1, 2])  # Go an octave below, same note, or go an octave above
     t = np.linspace(0, T, int(T * sr), endpoint=False)  # time variable
-    # Make a song with numpy array :]
-    # nPixels = int(len(frequencies))#All pixels in image
-    for k in range(nPixels):
+       for k in range(nPixels):
         if useOctaves:
             octave = random.choice(octaves)
         else:
@@ -129,8 +130,7 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
     return song, pixels_df, harmony
 
 
-def get_piano_notes():
-    # White keys are in Uppercase and black keys (sharps) are in lowercase
+def get_notes():
     octave = ['C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g', 'A', 'a', 'B']
     base_freq = 440  # Frequency of Note A4
     keys = np.array([x + str(y) for y in range(0, 9) for x in octave])
@@ -152,8 +152,8 @@ def get_sine_wave(frequency, duration, sample_rate=44100, amplitude=4096):
 
 def makeScale(whichOctave, whichKey, whichScale, makeHarmony='U0'):
     # Load note dictionary
-    note_freqs = get_piano_notes()
-
+    notefreqs = get_notes()
+    print("note_freqs---", notefreqs)
     # Define tones. Upper case are white keys in piano. Lower case are black keys
     scale_intervals = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
 
@@ -214,24 +214,45 @@ def makeScale(whichOctave, whichKey, whichScale, makeHarmony='U0'):
 
     # Initialize arrays
     freqs = []
-    # harmony = []
-    # harmony_val = harmony_select[makeHarmony]
     for i in range(nNotes):
         note = new_scale[scale[i]] + str(whichOctave)
-        freqToAdd = note_freqs[note]
+        freqToAdd = notefreqs[note]
         freqs.append(freqToAdd)
-        # harmony.append(harmony_val*freqToAdd)
-    return freqs  # ,harmony
 
-waterfall = cv2.imread('Noah.jpg')
-waterfall2 = cv2.cvtColor(waterfall, cv2.COLOR_BGR2RGB)
+    return freqs
+path = "Images"
+images = os.listdir("Images")
 
-waterfall_scale = makeScale(1, 'd', 'MAJOR')
-waterfall_song, waterfall_df,waterfall_song_harmony  = img2music(waterfall,
-                                                                waterfall_scale,
-                                                                T = 0.3,
-                                                                randomPixels = True,
-                                                                useOctaves = True)
+for i, (im,oct,key,sle,har) in enumerate(zip(images,octave, Keys,Scales, harmony)):
+    name, extension = os.path.splitext(im)
+    print(im,oct,key,sle,har)
+    print(name)
 
-wavfile.write('Noah.wav'    , rate = 22050, data = waterfall_song.astype(np.float32))
-ipd.Audio(waterfall_song, rate = sr)
+    image = os.path.join(path, im)
+    img = cv2.imread(image)
+
+
+    # img_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    # img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    #
+    # fig, axs = plt.subplots(1, 3, figsize = (15,15))
+    # names = ['BGR','RGB','HSV']
+    # imgs  = [img, img_RGB, img_hsv]
+    # i = 0
+    # for elem in imgs:
+    #     axs[i].title.set_text(names[i])
+    #     axs[i].imshow(elem)
+    #     axs[i].grid(False)
+    #     i += 1
+    # plt.show()
+
+    img_scale = makeScale(oct, key, sle,makeHarmony=har )
+    # print(img_scale)
+    img_song, img_df,img_song_harmony  = img2music(img, img_scale,
+                                                                    T = 0.3,
+                                                                    randomPixels = True,
+                                                                    useOctaves = True)
+
+    wavfile.write( name + '.wav'    , rate = 22050, data = img_song.astype(np.float32))
+
