@@ -1,0 +1,13 @@
+Activities to be carried out
+
+Exercise 1 -
+
+Use a different colour format to read/transform the image (Example: COLOR_BGR2BGRA,COLOR_BGR2HSV_FULL, etc.)
+
+Exercise 2 -
+
+You can generate your own hues-to-frequency mapping (hint: sinewaves are used in the example)
+
+Exercise 3 -
+
+Then add noise to the image and identify the sound the noise makes.
