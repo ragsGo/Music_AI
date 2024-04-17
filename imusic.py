@@ -11,7 +11,7 @@ from pedalboard import Pedalboard, Chorus, Reverb
 from pedalboard.io import AudioFile
 from scipy.io import wavfile
 song = np.array([])
-octave = np.array([1,2,4,6,7,5])
+octave = np.array([1,2,1,2,4,6,7,5,5])
 import os
 sr = 22050 # sample rate
 T = 0.5   # 0.1  duration
@@ -22,7 +22,7 @@ scale_freqs = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30]
 harmony = {'U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
                       'm7', 'M7', 'O8'  }
 Keys = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
-Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIA'
+Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIAN',
           'HARMONIC_MINOR','MINOR', 'MELODIC_MINOR', 'MIXOLYDIAN']
 def hue2freq(h, scale_freqs):
 
@@ -107,7 +107,7 @@ def img2music(img, scale=[220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30
     song = np.array([])  # This array will contain the song signal
     octaves = np.array([0.5, 1, 2])  # Go an octave below, same note, or go an octave above
     t = np.linspace(0, T, int(T * sr), endpoint=False)  # time variable
-       for k in range(nPixels):
+    for k in range(nPixels):
         if useOctaves:
             octave = random.choice(octaves)
         else:
@@ -153,7 +153,7 @@ def get_sine_wave(frequency, duration, sample_rate=44100, amplitude=4096):
 def makeScale(whichOctave, whichKey, whichScale, makeHarmony='U0'):
     # Load note dictionary
     notefreqs = get_notes()
-    print("note_freqs---", notefreqs)
+    # print("note_freqs---", notefreqs)
     # Define tones. Upper case are white keys in piano. Lower case are black keys
     scale_intervals = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
 
