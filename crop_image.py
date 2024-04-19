@@ -6,8 +6,8 @@ from imusic import make_tunes
 import os
 
 #Options for creating a harmony
-harmony = {'U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
-                      'm7', 'M7', 'O8'  }
+harmony = ['U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
+                      'm7', 'M7', 'O8'  ]
 Keys = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
 Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIA'
           'HARMONIC_MINOR','MINOR', 'MELODIC_MINOR', 'MIXOLYDIAN']
