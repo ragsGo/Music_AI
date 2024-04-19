@@ -10,8 +10,10 @@ import random
 from pedalboard import Pedalboard, Chorus, Reverb
 from pedalboard.io import AudioFile
 from scipy.io import wavfile
+import random
 song = np.array([])
-octave = np.array([1,2,1,2,4,6,7,5,5])
+
+octave = np.array([1,2,4,6,7,5, 1, 2])
 import os
 sr = 22050 # sample rate
 T = 0.5   # 0.1  duration
@@ -19,10 +21,10 @@ t = np.linspace(0, T, int(T*sr), endpoint=False) # time variable
 
 nPixels = 60
 scale_freqs = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30]
-harmony = {'U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
-                      'm7', 'M7', 'O8'  }
+harmony = ['U0',  'ST','M2','m3','M3','P4','DT','P5','m6', 'M6',
+                      'm7', 'M7', 'O8'  ]
 Keys = ['A', 'a', 'B', 'C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g']
-Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIAN',
+Scales = ['AEOLIAN','BLUES', 'LYDIAN', 'CHROMATIC', 'HARMONIC_MINOR','DIATONIC_MINOR', 'PHYRIGIAN','MAJOR', 'DORIA'
           'HARMONIC_MINOR','MINOR', 'MELODIC_MINOR', 'MIXOLYDIAN']
 def hue2freq(h, scale_freqs):
 
@@ -220,39 +222,52 @@ def makeScale(whichOctave, whichKey, whichScale, makeHarmony='U0'):
         freqs.append(freqToAdd)
 
     return freqs
-path = "Images"
-images = os.listdir("Images")
+# path = "Images"
+# images = os.listdir("Images")
 
-for i, (im,oct,key,sle,har) in enumerate(zip(images,octave, Keys,Scales, harmony)):
-    name, extension = os.path.splitext(im)
-    print(im,oct,key,sle,har)
-    print(name)
+def make_tunes(name, img, oct, key, sle,har):
+    if oct == None:
+        oct = random.choice(octave)
+    if key == None:
+        key = random.choice(Keys)
+    if sle == None:
+        sle = random.choice(Scales)
+    if har == None:
+        har = random.choice(harmony)
 
-    image = os.path.join(path, im)
-    img = cv2.imread(image)
-
-
-    # img_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    # img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    #
-    # fig, axs = plt.subplots(1, 3, figsize = (15,15))
-    # names = ['BGR','RGB','HSV']
-    # imgs  = [img, img_RGB, img_hsv]
-    # i = 0
-    # for elem in imgs:
-    #     axs[i].title.set_text(names[i])
-    #     axs[i].imshow(elem)
-    #     axs[i].grid(False)
-    #     i += 1
-    # plt.show()
 
     img_scale = makeScale(oct, key, sle,makeHarmony=har )
-    # print(img_scale)
+#     # print(img_scale)
     img_song, img_df,img_song_harmony  = img2music(img, img_scale,
                                                                     T = 0.3,
                                                                     randomPixels = True,
                                                                     useOctaves = True)
 
-    wavfile.write( name + '.wav'    , rate = 22050, data = img_song.astype(np.float32))
+    wavfile.write( make_tunes.__name__ + "_" + name + '.wav'    , rate = 22050, data = img_song.astype(np.float32))
 
+# for i, (im,oct,key,sle,har) in enumerate(zip(images,octave, Keys,Scales, harmony)):
+#     name, extension = os.path.splitext(im)
+#     print(im,oct,key,sle,har)
+#     print(name)
+#
+#     image = os.path.join(path, im)
+#     img = cv2.imread(image)
+#
+#
+#     # img_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#
+#     # img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#     #
+#     # fig, axs = plt.subplots(1, 3, figsize = (15,15))
+#     # names = ['BGR','RGB','HSV']
+#     # imgs  = [img, img_RGB, img_hsv]
+#     # i = 0
+#     # for elem in imgs:
+#     #     axs[i].title.set_text(names[i])
+#     #     axs[i].imshow(elem)
+#     #     axs[i].grid(False)
+#     #     i += 1
+#     # plt.show()
+#
+#
+#
